@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afet Noktası - Çevrimdışı Haberleşme & Akıllı Afet Hazırlık Platformu</title>
+    <meta name="description" content="Afet Noktası; offline mesh internetsiz haberleşme altyapısı, anlık sismik takip ve yapay zeka destekli kişiselleştirilmiş afet hazırlık kitleri sunan mobil dijital platformdur.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked JS for AI Text Markdown Formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        :root {
+            /* Brand Identity Palette from Charter */
+            --brand-navy: #1B2A4A;
+            --brand-navy-light: #2c3e66;
+            --brand-navy-subtle: #f0f4f8;
+            --brand-orange: #F26419;
+            --brand-orange-hover: #d9530f;
+            --brand-orange-light: #fff7ed;
+            --brand-orange-border: rgba(242, 100, 25, 0.25);
+            
+            /* Clean UI Canvas */
+            --bg-canvas: #fafafa;
+            --bg-surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-subtle: #64748b;
+            --border-clean: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-subtle: 0 4px 20px -2px rgba(27, 42, 74, 0.08);
+            --shadow-drawer: 0 20px 40px -10px rgba(15, 23, 42, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Header */
+        header {
+            height: 66px;
+            background: var(--brand-navy);
+            color: #ffffff;
+            padding: 0 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(27, 42, 74, 0.15);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .brand-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            color: #ffffff;
+        }
+
+        .brand-dot {
+            width: 9px;
+            height: 9px;
+            background-color: var(--brand-orange);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-ai-trigger {
+            background: var(--brand-orange);
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-ai-trigger:hover {
+            background: var(--brand-orange-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Subtle Admin Link (No embedded dashboard components) */
+        .btn-dash-link {
+            background: rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.45rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.775rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-dash-link:hover {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4.5rem 3rem;
+            max-width: 1350px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 960px) {
+            header { padding: 0 1.5rem; }
+            .nav-links { display: none; }
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 2.5rem 1.5rem;
+                text-align: center;
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--brand-orange-light);
+            border: 1px solid var(--brand-orange-border);
+            color: var(--brand-orange);
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1.2;
+            color: var(--brand-navy);
+            letter-spacing: -0.8px;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-title span {
+            color: var(--brand-orange);
+        }
+
+        .hero-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.65;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-hero {
+            background: var(--brand-navy);
+            color: #ffffff;
+            border: none;
+            padding: 0.9rem 1.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-hero:hover {
+            background: var(--brand-navy-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-hero {
+            background: var(--bg-surface);
+            color: var(--brand-navy);
+            border: 1.5px solid var(--border-clean);
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary-hero:hover {
+            border-color: var(--brand-navy);
+        }
+
+        /* 3D Phone Showcase Graphic */
+        .phone-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-img-container {
+            position: relative;
+            max-width: 420px;
+            width: 100%;
+            animation: floatPhone 4s infinite ease-in-out;
+        }
+
+        @keyframes floatPhone {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        .phone-img-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(27, 42, 74, 0.25);
+            display: block;
+        }
+
+        /* Floating Feature Badges */
+        .floating-badge {
+            position: absolute;
+            background: #ffffff;
+            border: 1px solid var(--border-clean);
+            padding: 0.65rem 1rem;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--brand-navy);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 5;
+        }
+
+        .floating-badge.b1 { top: 12%; left: -25px; }
+        .floating-badge.b2 { bottom: 18%; right: -25px; }
+
+        .badge-icon-mesh { color: #0284c7; }
+        .badge-icon-kit { color: var(--brand-orange); }
+
+        /* Features Section */
+        .features-section {
+            padding: 4rem 3rem;
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .section-header h2 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--brand-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 850px) {
+            .features-grid { grid-template-columns: 1fr; }
+        }
+
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-clean);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--brand-orange-border);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .feature-number {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--brand-orange);
+            background: var(--brand-orange-light);
+            width: fit-content;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--brand-navy);
+            margin-bottom: 0.65rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--brand-navy);
+            color: #94a3b8;
+            padding: 3rem 3rem 2rem 3rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1350px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-brand {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .footer-text {
+            font-size: 0.825rem;
+        }
+
+        /* FLOATING AI ASSISTANT BUTTON (FAB) */
+        .fab-ai-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--brand-orange);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.4rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(242, 100, 25, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 900;
+            transition: all 0.2s ease;
+        }
+
+        .fab-ai-btn:hover {
+            background: var(--brand-orange-hover);
+            transform: scale(1.04);
+        }
+
+        .fab-pulse {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.5; }
+        }
+
+        /* FLOATING AI ASSISTANT DRAWER / MODAL */
+        .ai-drawer-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: flex-end;
+            align-items: flex-end;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .ai-drawer-card {
+            background: #ffffff;
+            border: 1px solid var(--border-clean);
+            border-radius: var(--radius-lg);
+            width: 440px;
+            max-width: 100%;
+            height: 82vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-drawer);
+            animation: slideUp 0.25s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .drawer-header {
+            background: var(--brand-navy);
+            color: #ffffff;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-title h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .drawer-title p {
+            font-size: 0.725rem;
+            color: #94a3b8;
+        }
+
+        .btn-close-drawer {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.4rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .drawer-chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            background: #fafafa;
+        }
+
+        .drawer-chat-area::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .drawer-chat-area::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        /* Drawer Message Rows */
+        .drawer-msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 90%;
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        .drawer-msg.user {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .drawer-msg.assistant {
+            align-self: flex-start;
+        }
+
+        .drawer-author {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            color: var(--text-subtle);
+        }
+
+        .drawer-bubble {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+        }
+
+        .drawer-msg.user .drawer-bubble {
+            background: var(--brand-navy);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .drawer-msg.assistant .drawer-bubble {
+            background: #ffffff;
+            border: 1px solid var(--border-clean);
+            color: var(--text-main);
+            border-bottom-left-radius: 2px;
+        }
+
+        .drawer-bubble p { margin-bottom: 0.5rem; }
+        .drawer-bubble p:last-child { margin-bottom: 0; }
+        .drawer-bubble ul { margin: 0.4rem 0 0.5rem 1.1rem; }
+        .drawer-bubble li { margin-bottom: 0.3rem; }
+
+        /* Drawer Form Accordion */
+        .drawer-form-box {
+            background: #ffffff;
+            border-top: 1px solid var(--border-clean);
+            padding: 1rem 1.25rem;
+        }
+
+        .drawer-form-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--brand-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .drawer-form-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .drawer-input {
+            width: 100%;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-clean);
+            padding: 0.45rem 0.7rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .drawer-input:focus {
+            border-color: var(--brand-orange);
+        }
+
+        .btn-drawer-lead {
+            background: var(--brand-orange);
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Drawer Input Footer Bar */
+        .drawer-footer {
+            padding: 0.75rem 1rem;
+            background: #ffffff;
+            border-top: 1px solid var(--border-clean);
+        }
+
+        .drawer-input-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .drawer-chat-input {
+            flex: 1;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-clean);
+            padding: 0.55rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .drawer-btn-send {
+            background: var(--brand-navy);
+            color: #ffffff;
+            border: none;
+            padding: 0.55rem 0.95rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .drawer-tags {
+            display: flex;
+            gap: 0.35rem;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .drawer-tag-pill {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-clean);
+            color: var(--text-muted);
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.725rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .drawer-tag-pill:hover {
+            border-color: var(--brand-orange);
+            color: var(--brand-orange);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="/" class="brand-logo">
+            <span class="brand-name">Afet Noktası</span>
+            <span class="brand-dot"></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#hakkimizda">Hakkımızda</a></li>
+            <li><a href="#ozellikler">Offline Mesh</a></li>
+            <li><a href="#ozellikler">Sismik Takip</a></li>
+            <li><a href="#ozellikler">Afet Kitleri</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <button class="btn-ai-trigger" onclick="toggleDrawer()">
+                Akıllı Asistanı Aç
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hakkimizda">
+        <div class="hero-text">
+            <div class="hero-badge">
+                <span class="fab-pulse" style="background: var(--brand-orange);"></span>
+                7/24 Kesintisiz Güvenlik Ekosistemi
+            </div>
+
+            <h1 class="hero-title">
+                İnternetsiz İletişim & <span>Akıllı Afet</span> Hazırlığı
+            </h1>
+
+            <p class="hero-subtitle">
+                Afet Noktası; deprem ve afet durumlarında telekomünikasyon çökse dahi <strong>Offline Mesh</strong> teknolojisiyle internetsiz haberleşme sağlar ve <strong>Akıllı Asistanı</strong> ile bölgesel sismik riskinize özel deprem kitleri sunar.
+            </p>
+
+            <div class="hero-buttons">
+                <button class="btn-primary-hero" onclick="toggleDrawer()">
+                    Akıllı Asistanı Başlat
+                </button>
+                <a href="#ozellikler" class="btn-secondary-hero">
+                    Teknolojiyi Keşfet
+                </a>
+            </div>
+        </div>
+
+        <!-- 3D Smartphone Display Graphics -->
+        <div class="phone-wrapper">
+            <div class="phone-img-container">
+                <img src="/static/afet_noktasi_phone_3d.png" alt="Afet Noktası 3D Mobile App">
+                
+                <div class="floating-badge b1">
+                    <span class="badge-icon-mesh">🌐</span> Offline Mesh Ağ Aktif
+                </div>
+                
+                <div class="floating-badge b2">
+                    <span class="badge-icon-kit">🎒</span> 72 Saatlik Deprem Kiti
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="ozellikler">
+        <div class="section-header">
+            <h2>Öne Çıkan Üç Temel Teknolojimiz</h2>
+            <p>Afet öncesinde tam hazırlık, afet anında kesintisiz iletişim altyapısı.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-number">01</div>
+                <h3>Offline Mesh Haberleşme</h3>
+                <p>Şebeke ve internet kesintilerinde bile cihazlar arası doğrudan internetsiz yerel haberleşme ağı kurarak sevdiklerinizle iletişimi koparmaz.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-number">02</div>
+                <h3>Sismik Veri & Risk Takibi</h3>
+                <p>Bulunduğunuz konumun fay hatlarına yakınlığı ve zemin yapısına özel anlık sismik risk raporları sunar.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-number">03</div>
+                <h3>Kişiselleştirilmiş Afet Kitleri</h3>
+                <p>Yapay zeka asistanı analizi ile aile nüfusunuza ve bölgesel gereksinimlerinize özel 72 saatlik hayatta kalma kitleri tedarik eder.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">Afet Noktası</div>
+                <div class="footer-text">www.afetnoktasi.com | Koray Demir Brand Project</div>
+            </div>
+            <div class="footer-text">
+                © 2026 Afet Noktası. Tüm Hakları Saklıdır.
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING AI ASSISTANT BUTTON (FAB) -->
+    <button class="fab-ai-btn" onclick="toggleDrawer()" id="fabBtn">
+        <span class="fab-pulse"></span>
+        Afet Danışmanı AI
+    </button>
+
+    <!-- FLOATING AI ASSISTANT DRAWER / MODAL -->
+    <div class="ai-drawer-backdrop" id="aiDrawerBackdrop" onclick="closeDrawerOutside(event)">
+        <div class="ai-drawer-card">
+            
+            <!-- Drawer Header -->
+            <div class="drawer-header">
+                <div class="drawer-title">
+                    <h3>Afet Noktası Akıllı Asistanı</h3>
+                    <p>Sismik Risk & Afet Hazırlık Danışmanı</p>
+                </div>
+                <button class="btn-close-drawer" onclick="toggleDrawer()">&times;</button>
+            </div>
+
+            <!-- Drawer Chat Stream -->
+            <div class="drawer-chat-area" id="drawerChatArea">
+                <div class="drawer-msg assistant">
+                    <div class="drawer-author">Afet Noktası Asistanı</div>
+                    <div class="drawer-bubble">
+                        <p>Merhaba! Ben <strong>Afet Noktası</strong>'nın akıllı hazırlık danışmanıyım. 🛡️</p>
+                        <p>Sismik risk analizleri yapabilir ve bölgesel ihtiyacınıza özel afet kiti önerebilirim. Size nasıl yardımcı olabilirim?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Embedded Quick Lead Form -->
+            <div class="drawer-form-box">
+                <div class="drawer-form-title">
+                    <span>📞 Ücretsiz Risk & Kit Teklifi Al</span>
+                </div>
+                <form id="drawerLeadForm" onsubmit="leadGonderDrawer(event)" class="drawer-form-grid">
+                    <input type="text" id="dLeadIsim" class="drawer-input" placeholder="Adınız Soyadınız *" required>
+                    <input type="tel" id="dLeadTelefon" class="drawer-input" placeholder="Telefon Numaranız *" required>
+                    <button type="submit" class="btn-drawer-lead" id="btnDLead">Bilgilerimi Gönder</button>
+                    <div id="dLeadStatus" style="font-size: 0.75rem; text-align: center; display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Drawer Input Footer -->
+            <div class="drawer-footer">
+                <form class="drawer-input-row" onsubmit="mesajGonderDrawer(event)">
+                    <input type="text" id="drawerInput" class="drawer-chat-input" placeholder="Bir soru yazın..." autocomplete="off">
+                    <button type="submit" class="drawer-btn-send">Gönder</button>
+                </form>
+
+                <div class="drawer-tags">
+                    <div class="drawer-tag-pill" onclick="hizliDrawerMsg('Afet kiti içerisinde neler olmalıdır?')">🎒 Afet Kiti</div>
+                    <div class="drawer-tag-pill" onclick="hizliDrawerMsg('İstanbul deprem riski ve yapılması gerekenler?')">⚠️ Deprem Riski</div>
+                    <div class="drawer-tag-pill" onclick="hizliDrawerMsg('Offline mesh haberleşme nedir?')">🌐 Offline Mesh</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Client Script -->
+    <script>
+        const drawerBackdrop = document.getElementById('aiDrawerBackdrop');
+        const drawerChatArea = document.getElementById('drawerChatArea');
+        const drawerInput = document.getElementById('drawerInput');
+
+        let gecmis = [];
+
+        if (window.marked) {
+            marked.setOptions({ gfm: true, breaks: true });
+        }
+
+        function toggleDrawer() {
+            if (drawerBackdrop.style.display === 'flex') {
+                drawerBackdrop.style.display = 'none';
+            } else {
+                drawerBackdrop.style.display = 'flex';
+                drawerChatScrollBottom();
+            }
+        }
+
+        function closeDrawerOutside(e) {
+            if (e.target === drawerBackdrop) {
+                drawerBackdrop.style.display = 'none';
+            }
+        }
+
+        function drawerChatScrollBottom() {
+            drawerChatArea.scrollTop = drawerChatArea.scrollHeight;
+        }
+
+        function renderMarkdown(text) {
+            if (window.marked) {
+                return marked.parse(text);
+            }
+            return text.replace(/\n/g, '<br>');
+        }
+
+        function appendDrawerMsg(role, content) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `drawer-msg ${role}`;
+
+            const author = document.createElement('div');
+            author.className = 'drawer-author';
+            author.textContent = role === 'assistant' ? 'Afet Noktası Asistanı' : 'Siz';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'drawer-bubble';
+
+            if (role === 'assistant') {
+                bubble.innerHTML = renderMarkdown(content);
+            } else {
+                bubble.textContent = content;
+            }
+
+            msgDiv.appendChild(author);
+            msgDiv.appendChild(bubble);
+            drawerChatArea.appendChild(msgDiv);
+            drawerChatScrollBottom();
+
+            gecmis.push({ role: role === 'user' ? 'user' : 'assistant', content: content });
+        }
+
+        async function mesajGonderDrawer(e) {
+            if (e) e.preventDefault();
+            const text = drawerInput.value.trim();
+            if (!text) return;
+
+            drawerInput.value = '';
+            appendDrawerMsg('user', text);
+
+            try {
+                const res = await fetch('/api/sohbet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mesaj: text, gecmis: gecmis.slice(-14) })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                    appendDrawerMsg('assistant', data.yanit);
+                } else {
+                    appendDrawerMsg('assistant', `⚠️ **Hata:** ${data.hata || 'Yanıt alınamadı.'}`);
+                }
+            } catch (err) {
+                appendDrawerMsg('assistant', '⚠️ **Ağ Hatası:** Sunucuyla iletişim hatası.');
+            }
+        }
+
+        function hizliDrawerMsg(text) {
+            drawerInput.value = text;
+            mesajGonderDrawer();
+        }
+
+        async function leadGonderDrawer(e) {
+            e.preventDefault();
+            const isim = document.getElementById('dLeadIsim').value.trim();
+            const telefon = document.getElementById('dLeadTelefon').value.trim();
+            const status = document.getElementById('dLeadStatus');
+            const btn = document.getElementById('btnDLead');
+
+            if (!isim || !telefon) return;
+            btn.disabled = true;
+            btn.textContent = 'Gönderiliyor...';
+
+            try {
+                const res = await fetch('/api/leads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isim, telefon, mesaj: 'Landing page modal formundan geldi.' })
+                });
+
+                const data = await res.json();
+                status.style.display = 'block';
+
+                if (data.ok) {
+                    status.style.color = '#16a34a';
+                    status.innerText = '✅ İletişim bilgileriniz başarıyla kaydedildi!';
+                    document.getElementById('drawerLeadForm').reset();
+                    appendDrawerMsg('assistant', `Sayın **${isim}**, iletişim bilgileriniz kaydedildi. Afet uzmanımız en kısa sürede **${telefon}** numaranızdan ulaşacaktır.`);
+                } else {
+                    status.style.color = '#F26419';
+                    status.innerText = '❌ ' + (data.hata || 'Kayıt alınamadı.');
+                }
+            } catch (err) {
+                status.style.display = 'block';
+                status.style.color = '#F26419';
+                status.innerText = '❌ İletişim hatası oluştu.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Bilgilerimi Gönder';
+            }
+        }
+    </script>
+</body>
+</html>

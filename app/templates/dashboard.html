@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afet Noktası - Yönetim Paneli & Müşteri Takip Sistemi</title>
+    <meta name="description" content="Afet Noktası Akıllı Asistanı üzerinden toplanan potansiyel müşteri (Lead) bilgilerinin bağımsız yönetim paneli.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Official Brand Identity Palette */
+            --brand-navy: #1B2A4A;
+            --brand-navy-subtle: #f0f4f8;
+            --brand-orange: #F26419;
+            --brand-orange-light: #fff7ed;
+            --brand-orange-border: rgba(242, 100, 25, 0.25);
+            
+            /* Clean UI Canvas */
+            --bg-canvas: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-sidebar: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-subtle: #64748b;
+            --border-clean: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --radius-lg: 12px;
+            --radius-md: 8px;
+            --radius-sm: 4px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Independent Header Navigation */
+        header {
+            height: 62px;
+            background: var(--brand-navy);
+            color: #ffffff;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(27, 42, 74, 0.15);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .brand-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+
+        .brand-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--brand-orange);
+            border-radius: 50%;
+        }
+
+        .brand-tag {
+            font-size: 0.725rem;
+            background: rgba(242, 100, 25, 0.2);
+            color: #ffedd5;
+            border: 1px solid rgba(242, 100, 25, 0.35);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: 0.3rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-site-link {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+
+        .btn-site-link:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #ffffff;
+        }
+
+        /* Container */
+        .dash-container {
+            max-width: 1350px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Summary Metric Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-clean);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+        }
+
+        .stat-card.total { border-top: 3px solid var(--brand-navy); }
+        .stat-card.today { border-top: 3px solid var(--brand-orange); }
+        .stat-card.rate { border-top: 3px solid #16a34a; }
+
+        .stat-meta h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--brand-navy);
+            letter-spacing: -0.5px;
+        }
+
+        .stat-meta p {
+            font-size: 0.8rem;
+            color: var(--text-subtle);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Standalone Table Card */
+        .data-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-clean);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--brand-navy);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-field input {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-clean);
+            color: var(--text-main);
+            padding: 0.5rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            width: 250px;
+            transition: border-color 0.15s;
+        }
+
+        .search-field input:focus {
+            background: #ffffff;
+            border-color: var(--brand-navy);
+        }
+
+        .btn-csv {
+            background: var(--brand-navy-subtle);
+            border: 1px solid var(--border-clean);
+            color: var(--brand-navy);
+            padding: 0.5rem 0.9rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.825rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-csv:hover {
+            background: #e2e8f0;
+        }
+
+        /* F-Pattern UX Table Layout (Müşteri Adı at Column 1) */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--bg-canvas);
+            color: var(--text-subtle);
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-clean);
+            text-transform: uppercase;
+            font-size: 0.725rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* F-Pattern Eye Focus on First Column */
+        th:first-child, td:first-child {
+            font-weight: 700;
+            color: var(--brand-navy);
+            padding-left: 1.25rem;
+        }
+
+        td {
+            padding: 0.95rem 1rem;
+            border-bottom: 1px solid var(--border-clean);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: var(--bg-canvas);
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 0.2rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-new {
+            background: var(--brand-orange-light);
+            color: var(--brand-orange);
+            border: 1px solid var(--brand-orange-border);
+        }
+
+        .badge-reviewed {
+            background: var(--brand-navy-subtle);
+            color: var(--brand-navy);
+            border: 1px solid rgba(27, 42, 74, 0.2);
+        }
+
+        .badge-contacted {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid rgba(22, 163, 74, 0.2);
+        }
+
+        .phone-link {
+            color: var(--brand-navy);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .phone-link:hover {
+            color: var(--brand-orange);
+            text-decoration: underline;
+        }
+
+        .btn-view-detail {
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-clean);
+            color: var(--text-muted);
+            padding: 0.3rem 0.65rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.775rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-view-detail:hover {
+            background: var(--bg-surface);
+            color: var(--brand-navy);
+            border-color: var(--brand-navy);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3.5rem 1rem;
+            color: var(--text-subtle);
+        }
+
+        /* Lead Detail Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border: 1px solid var(--border-clean);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-clean);
+        }
+
+        .modal-header h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--brand-navy);
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-subtle);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .modal-field {
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+        }
+
+        .modal-field div {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Independent Navigation Header -->
+    <header>
+        <a href="/dashboard" class="brand">
+            <span class="brand-text">Afet Noktası</span>
+            <span class="brand-dot"></span>
+            <span class="brand-tag">Yönetim Paneli - Lead Dashboard</span>
+        </a>
+
+        <div class="nav-controls">
+            <a href="/" class="btn-site-link">
+                Ana Sayfaya Dön
+            </a>
+            <a href="/logout" class="btn-site-link" style="background: rgba(242,100,25,0.15); color: #ffedd5; border-color: rgba(242,100,25,0.4);">
+                Çıkış Yap
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <div class="dash-container">
+        
+        <!-- Summary Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-meta">
+                    <h3 id="statTotal">0</h3>
+                    <p>Toplam İletişim Talebi</p>
+                </div>
+            </div>
+
+            <div class="stat-card today">
+                <div class="stat-meta">
+                    <h3 id="statToday">0</h3>
+                    <p>Aktif Lead Sayısı</p>
+                </div>
+            </div>
+
+            <div class="stat-card rate">
+                <div class="stat-meta">
+                    <h3>%100</h3>
+                    <p>AI Yanıt & Danışmanlık Oranı</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- F-Pattern UX Lead Data Card -->
+        <div class="data-card">
+            <div class="data-card-header">
+                <div class="header-title">
+                    <h2>Gelen Müşteri İletişim Talepleri</h2>
+                </div>
+
+                <div class="header-actions">
+                    <div class="search-field">
+                        <input type="text" id="searchInput" placeholder="İsim veya telefon ara..." onkeyup="filtrele()">
+                    </div>
+
+                    <button class="btn-csv" onclick="csvIndir()">
+                        CSV Dışa Aktar
+                    </button>
+                </div>
+            </div>
+
+            <!-- F-Pattern UX Table: Column 1 is Müşteri Adı -->
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Müşteri Adı</th>
+                            <th>Telefon</th>
+                            <th>Talep / Not</th>
+                            <th>Durum</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadTableBody">
+                        <!-- Dynamically populated via Fetch API from GET /api/leads -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <p>Henüz kayıtlı bir müşteri iletişim talebi bulunmuyor.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Lead Detail Modal -->
+    <div class="modal-backdrop" id="detailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Müşteri Kayıt Detayı</h3>
+                <button class="btn-close-modal" onclick="modalKapat()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic Modal Body Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Fetch API Script for GET /api/leads -->
+    <script>
+        let tumKayitlar = [];
+
+        // Dynamic API integration on DOMContentLoaded
+        async function leadleriYukle() {
+            try {
+                const res = await fetch('/api/leads');
+                const data = await res.json();
+                
+                if (data.ok) {
+                    tumKayitlar = data.data;
+                    istatistikGuncelle(tumKayitlar);
+                    tabloyuCiz(tumKayitlar);
+                }
+            } catch (err) {
+                console.error('API Veri yükleme hatası:', err);
+            }
+        }
+
+        function istatistikGuncelle(kayitlar) {
+            document.getElementById('statTotal').innerText = kayitlar.length;
+            document.getElementById('statToday').innerText = kayitlar.length;
+        }
+
+        function getStatusBadge(status) {
+            const st = (status || 'Yeni').toLowerCase();
+            if (st === 'incelendi') {
+                return `<span class="badge-status badge-reviewed">İncelendi</span>`;
+            } else if (st === 'ulaşıldı' || st === 'ulasildi') {
+                return `<span class="badge-status badge-contacted">Ulaşıldı</span>`;
+            }
+            return `<span class="badge-status badge-new">Yeni</span>`;
+        }
+
+        // F-Pattern UX rendering loop (Column 1: Müşteri Adı)
+        function tabloyuCiz(kayitlar) {
+            const tbody = document.getElementById('leadTableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            if (!kayitlar || kayitlar.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Loop through visitor leads dynamically
+            kayitlar.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 700;">${escapeHtml(item.isim)}</td>
+                    <td>
+                        <a href="tel:${escapeHtml(item.telefon)}" class="phone-link">
+                            ${escapeHtml(item.telefon)}
+                        </a>
+                    </td>
+                    <td style="max-width: 340px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.mesaj || '-')}</td>
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td style="color: var(--text-subtle); font-size: 0.8rem; font-weight: 500;">${formatTarih(item.created_at)}</td>
+                    <td>
+                        <button class="btn-view-detail" onclick="detayGoster(${item.id})">
+                            İncele
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filtrele() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) {
+                tabloyuCiz(tumKayitlar);
+                return;
+            }
+
+            const filtrelenmis = tumKayitlar.filter(item => 
+                item.isim.toLowerCase().includes(query) || 
+                item.telefon.toLowerCase().includes(query) ||
+                (item.mesaj && item.mesaj.toLowerCase().includes(query))
+            );
+            tabloyuCiz(filtrelenmis);
+        }
+
+        function detayGoster(id) {
+            const lead = tumKayitlar.find(item => item.id === id);
+            if (!lead) return;
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="modal-field">
+                    <label>Müşteri Adı Soyadı</label>
+                    <div>${escapeHtml(lead.isim)}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Telefon Numarası</label>
+                    <div><a href="tel:${escapeHtml(lead.telefon)}" class="phone-link">${escapeHtml(lead.telefon)}</a></div>
+                </div>
+                <div class="modal-field">
+                    <label>Kayıt Tarihi</label>
+                    <div>${formatTarih(lead.created_at)}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Durum</label>
+                    <div>${getStatusBadge(lead.status)}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Not / Şehir / Mesaj</label>
+                    <div style="background: var(--bg-canvas); padding: 0.75rem; border-radius: 6px; font-weight: 400; margin-top: 0.25rem;">
+                        ${escapeHtml(lead.mesaj || 'Not belirtilmemiş.')}
+                    </div>
+                </div>
+            `;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function modalKapat() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatTarih(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                return d.toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function csvIndir() {
+            if (tumKayitlar.length === 0) {
+                alert('İndirilecek kayıt bulunmamaktadır.');
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Isim,Telefon,Mesaj,Durum,Tarih\n";
+
+            tumKayitlar.forEach(row => {
+                const line = [
+                    `"${(row.isim || '').replace(/"/g, '""')}"`,
+                    `"${(row.telefon || '').replace(/"/g, '""')}"`,
+                    `"${(row.mesaj || '').replace(/"/g, '""')}"`,
+                    `"${row.status || 'Yeni'}"`,
+                    `"${row.created_at || ''}"`
+                ].join(",");
+                csvContent += line + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `afet_noktasi_leadler_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Auto fetch API on load
+        window.addEventListener('DOMContentLoaded', leadleriYukle);
+    </script>
+</body>
+</html>
