@@ -53,9 +53,9 @@
             overflow-x: hidden;
         }
 
-        /* Navigation Header */
+        /* Modern Navigation Header */
         header {
-            height: 66px;
+            height: 68px;
             background: var(--brand-navy);
             color: #ffffff;
             padding: 0 3rem;
@@ -94,14 +94,14 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 2.2rem;
             list-style: none;
         }
 
         .nav-links a {
             color: #cbd5e1;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             font-weight: 500;
             transition: color 0.15s ease;
         }
@@ -120,7 +120,7 @@
             background: var(--brand-orange);
             color: #ffffff;
             border: none;
-            padding: 0.6rem 1.25rem;
+            padding: 0.65rem 1.35rem;
             border-radius: var(--radius-sm);
             font-size: 0.875rem;
             font-weight: 700;
@@ -134,25 +134,6 @@
         .btn-ai-trigger:hover {
             background: var(--brand-orange-hover);
             transform: translateY(-1px);
-        }
-
-        /* Subtle Admin Link (No embedded dashboard components) */
-        .btn-dash-link {
-            background: rgba(255, 255, 255, 0.08);
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 0.45rem 0.85rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.775rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .btn-dash-link:hover {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.15);
         }
 
         /* Hero Section */
@@ -282,7 +263,6 @@
             display: block;
         }
 
-        /* Floating Feature Badges */
         .floating-badge {
             position: absolute;
             background: #ffffff;
@@ -307,7 +287,7 @@
 
         /* Features Section */
         .features-section {
-            padding: 4rem 3rem;
+            padding: 4.5rem 3rem;
             max-width: 1350px;
             margin: 0 auto;
         }
@@ -315,7 +295,7 @@
         .section-header {
             text-align: center;
             max-width: 650px;
-            margin: 0 auto 3rem auto;
+            margin: 0 auto 3.5rem auto;
         }
 
         .section-header h2 {
@@ -378,33 +358,100 @@
             line-height: 1.6;
         }
 
-        /* Footer */
+        /* Modernized Multi-Column Footer */
         footer {
             background: var(--brand-navy);
             color: #94a3b8;
-            padding: 3rem 3rem 2rem 3rem;
-            margin-top: 4rem;
+            padding: 4rem 3rem 2rem 3rem;
+            margin-top: 5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer-container {
+        .footer-grid {
             max-width: 1350px;
             margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.2fr;
+            gap: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer-brand {
-            font-size: 1.1rem;
+        @media (max-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer-col h4 {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-brand-title {
+            font-size: 1.25rem;
             font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-desc {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .footer-meta-badge {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffedd5;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.65rem;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .footer-links a:hover {
             color: #ffffff;
         }
 
-        .footer-text {
-            font-size: 0.825rem;
+        .footer-bottom {
+            max-width: 1350px;
+            margin: 1.75rem auto 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         /* FLOATING AI ASSISTANT BUTTON (FAB) */
@@ -679,7 +726,7 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- Modern Header Navigation -->
     <header>
         <a href="/" class="brand-logo">
             <span class="brand-name">Afet Noktası</span>
@@ -687,10 +734,11 @@
         </a>
 
         <ul class="nav-links">
-            <li><a href="#hakkimizda">Hakkımızda</a></li>
-            <li><a href="#ozellikler">Offline Mesh</a></li>
-            <li><a href="#ozellikler">Sismik Takip</a></li>
-            <li><a href="#ozellikler">Afet Kitleri</a></li>
+            <li><a href="/hakkimizda">Hakkımızda</a></li>
+            <li><a href="/hakkimizda#mesh">Offline Mesh</a></li>
+            <li><a href="/hakkimizda#sismik">Sismik Takip</a></li>
+            <li><a href="/hakkimizda#kitler">Afet Kitleri</a></li>
+            <li><a href="/kvkk">KVKK Aydınlatma</a></li>
         </ul>
 
         <div class="nav-actions">
@@ -770,16 +818,59 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Modernized Multi-Column Footer with KVKK & Legal -->
     <footer>
-        <div class="footer-container">
-            <div>
-                <div class="footer-brand">Afet Noktası</div>
-                <div class="footer-text">www.afetnoktasi.com | Koray Demir Brand Project</div>
+        <div class="footer-grid">
+            <!-- Col 1: Brand & Mission -->
+            <div class="footer-col">
+                <div class="footer-brand-title">
+                    <span>Afet Noktası</span>
+                    <span class="brand-dot"></span>
+                </div>
+                <p class="footer-desc">
+                    Afet öncesi hazırlık, anlık sismik takip ve internetsiz <strong>Offline Mesh</strong> haberleşme altyapısıyla kesintisiz güvenlik ekosistemi.
+                </p>
+                <div class="footer-meta-badge">
+                    Marka Yöneticisi: Koray Demir
+                </div>
             </div>
-            <div class="footer-text">
-                © 2026 Afet Noktası. Tüm Hakları Saklıdır.
+
+            <!-- Col 2: Hizmetler & Nav -->
+            <div class="footer-col">
+                <h4>Hızlı Bağlantılar</h4>
+                <ul class="footer-links">
+                    <li><a href="/hakkimizda">Hakkımızda & Hikayemiz</a></li>
+                    <li><a href="/hakkimizda#mesh">Offline Mesh Ağ</a></li>
+                    <li><a href="/hakkimizda#sismik">Sismik Risk Takibi</a></li>
+                    <li><a href="/hakkimizda#kitler">Afet Hazırlık Kitleri</a></li>
+                </ul>
             </div>
+
+            <!-- Col 3: Kurumsal & Yasal (KVKK) -->
+            <div class="footer-col">
+                <h4>Yasal & Kurumsal</h4>
+                <ul class="footer-links">
+                    <li><a href="/kvkk">KVKK Aydınlatma Metni</a></li>
+                    <li><a href="/gizlilik">Gizlilik Politikası</a></li>
+                    <li><a href="/cerez-politikasi">Çerez Politikası</a></li>
+                    <li><a href="/kullanim-kosullari">Kullanım Koşulları</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 4: İletişim & Sosyal Medya -->
+            <div class="footer-col">
+                <h4>İletişim & Sosyal Medya</h4>
+                <ul class="footer-links">
+                    <li><i class="fa-solid fa-globe"></i> www.afetnoktasi.com</li>
+                    <li><i class="fa-brands fa-instagram"></i> @afetnoktasi</li>
+                    <li><i class="fa-brands fa-linkedin"></i> linkedin.com/company/afetnoktasi</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 Afet Noktası. Tüm Hakları Saklıdır.</div>
+            <div>Teknoloji, Afet Yönetimi ve Güvenlik Ekosistemi</div>
         </div>
     </footer>
 

@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from app.database import init_db
+from flask_cors import CORS
 
 
 def create_app(config_class=Config) -> Flask:
@@ -11,6 +12,7 @@ def create_app(config_class=Config) -> Flask:
     :return: Flask app instance
     """
     app = Flask(__name__)
+    CORS(app)
     app.config.from_object(config_class)
 
     # Initialize database schema

@@ -14,9 +14,48 @@ ADMIN_PASSWORD = "123"
 def index():
     """
     Renders the public Afet Noktası Landing Page & AI Assistant Modal.
-    No dashboard links or admin traces visible to visitors.
     """
     return render_template("index.html")
+
+
+@main_bp.route("/hakkimizda", methods=["GET"])
+def hakkimizda():
+    """
+    Renders the official Hakkımızda & Marka Hikayesi page.
+    """
+    return render_template("hakkimizda.html")
+
+
+@main_bp.route("/kvkk", methods=["GET"])
+def kvkk():
+    """
+    Renders the official KVKK Aydınlatma Metni page.
+    """
+    return render_template("kvkk.html")
+
+
+@main_bp.route("/gizlilik", methods=["GET"])
+def gizlilik():
+    """
+    Renders the official Gizlilik Politikası page.
+    """
+    return render_template("gizlilik.html")
+
+
+@main_bp.route("/cerez-politikasi", methods=["GET"])
+def cerez():
+    """
+    Renders the official Çerez Politikası page.
+    """
+    return render_template("cerez.html")
+
+
+@main_bp.route("/kullanim-kosullari", methods=["GET"])
+def kullanim_kosullari():
+    """
+    Renders the official Kullanım Koşulları page.
+    """
+    return render_template("kullanim_kosullari.html")
 
 
 @main_bp.route("/login", methods=["GET", "POST"])
