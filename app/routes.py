@@ -108,14 +108,26 @@ def api_sohbet():
         return jsonify({"ok": True}), 200
 
     data = request.get_json(silent=True) or {}
-    mesaj = data.get("mesaj", "").strip()
-    gecmis = data.get("gecmis", [])
+    mesaj = (data.get("mesaj") or data.get("message") or data.get("prompt") or data.get("text") or "").strip()
+    gecmis = data.get("gecmis") or data.get("history") or data.get("messages") or []
 
     if not mesaj:
         return jsonify({
             "ok": False,
             "hata": "Lütfen geçerli bir mesaj yazın."
         }), 400
+
+    # Auto-save lead if user shares phone number directly in chat
+    try:
+        import re
+        phone_match = re.search(r"(?:0\s*5\d{2}|5\d{2})[\s\-\.]?\d{3}[\s\-\.]?\d{2}[\s\-\.]?\d{2}|\b\d{10,11}\b", mesaj)
+        if phone_match:
+            name_match = re.search(r"(?:adım|adim|ismim)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ]+)", mesaj, re.IGNORECASE)
+            lead_name = name_match.group(1).title() if name_match else "Sohbet Ziyaretçisi"
+            lead_phone = phone_match.group(0).replace(" ", "").replace("-", "").replace(".", "")
+            lead_ekle(isim=lead_name, telefon=lead_phone, mesaj=f"Canlı Sohbet İçi: {mesaj}")
+    except Exception:
+        pass
 
     try:
         yanit = ai_service.sohbet_yaniti_al(kullanici_mesaji=mesaj, gecmis=gecmis)
@@ -126,7 +138,7 @@ def api_sohbet():
     except Exception as err:
         return jsonify({
             "ok": True,
-            "yanit": "Afet Noktası Danışmanı: Şu anda sistemimizde kısa süreli bir yoğunluk yaşanıyor. Size yardımcı olabilmemiz için isim ve telefon numaranızı form üzerinden iletebilirsiniz."
+            "yanit": "Şu anda sistemimizde kısa süreli bir yoğunluk yaşanıyor. Size yardımcı olabilmemiz ve bölgenize özel risk raporunu iletebilmemiz için isim ve telefon numaranızı ekrandaki form üzerinden iletebilirsiniz."
         }), 200
 
 

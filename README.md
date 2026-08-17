@@ -1,6 +1,6 @@
 # 🛡️ Afet Noktası - Akıllı Afet Hazırlık & Satış Asistanı Platformu
 
-**Afet Noktası**, doğal afetler öncesinde ve anında hayati öneme sahip sismik risk verileri sunan, **Offline Mesh** (internetsiz haberleşme) altyapısını destekleyen ve bünyesindeki **NVIDIA NIM AI (MiniMax-M3)** destekli Akıllı Asistan ile kullanıcılara kişiselleştirilmiş 72 saatlik deprem çantası çözümleri sunan mobil dijital platform web MVP projesidir.
+**Afet Noktası**, doğal afetler öncesinde erken uyarı (deprem ve yangın), anında ise **Bluetooth (BT) ve Wi-Fi Mesh** üzerinden internetsiz haberleşme ağı (**Kurtarıcı ve Afetzede modları**) sunan, bünyesindeki **NVIDIA NIM AI (MiniMax-M3)** destekli Akıllı Asistan ile kullanıcılara kişiselleştirilmiş 72 saatlik afet hazırlık kitleri sağlayan mobil dijital güvenlik platformudur.
 
 ---
 
@@ -35,11 +35,16 @@ smartlead_ai/
 
 ### 1. Ziyaretçi Landing Page (`/`)
 - **3D Telefon Görseli ve Ürün Sunumu:** Şık ve etkileşimli mobil uygulama tanıtımı.
-- **Temel Teknolojiler:** Offline Mesh haberleşme, sismik risk takibi ve 72 saatlik acil durum kitleri.
+- **Temel Teknolojiler:** 
+  - **İnternetsiz İletişim:** Bluetooth (BT) ve Wi-Fi Mesh ile şebekesiz cihazdan cihaza (P2P) haberleşme ağı.
+  - **Afetzede & Kurtarıcı Modları:** Enkaz altından veya acil durumdan internetsiz SOS/konum yayını ve arama-kurtarma koordinasyonu.
+  - **Afet Öncesi Erken Uyarı:** Sismik risk takibi, deprem ve yangın erken uyarı bildirimleri.
+  - **72 Saatlik Afet Kitleri:** Bölgesel gereksinimlere özel özelleştirilmiş hayatta kalma çantaları.
 - **Ziyaretçi İzolasyonu:** Ziyaretçi arayüzünde yönetim paneline dair hiçbir buton veya yönlendirme izi yer almaz.
 
 ### 2. Yüzen Yapay Zeka Asistanı Modalı (Floating AI Modal)
 - **NVIDIA NIM (MiniMax-M3) Entegrasyonu:** Yüksek hızlı, akıllı ve doğal Türkçe afet danışmanlığı yanıt üretimi.
+- **Teknoloji Yetkinliği:** Bluetooth/Wi-Fi mesh, kurtarıcı/afetzede protokolleri, deprem/yangın erken uyarıları hakkında derinlemesine rehberlik.
 - **Çoklu Tur Sohbet Hafızası (Multi-Turn Chat Memory):** Yapay zeka kullanıcının önceki mesajlarını ve bölgesel bilgilerini unutmaz.
 - **Zengin Metin Ayrıştırma (`marked.js`):** Liste maddeleri, kalın yazılar ve başlıklar düzenli HTML formatında sunulur.
 - **Entegre İletişim Formu:** Ziyaretçilerin doğrudan sohbet modülü üzerinden ücretsiz risk ve kit teklifi bırakabilmesi.
