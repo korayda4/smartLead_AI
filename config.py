@@ -18,7 +18,7 @@ class Config:
     DATABASE_PATH = os.environ.get("DATABASE_PATH", str(BASE_DIR / "afet_noktasi.db"))
     
     # NVIDIA AI (NIM) Service Configuration
-    NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
+    NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY") or os.environ.get("GROQ_API_KEY") or "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"
     NVIDIA_MODEL = os.environ.get("NVIDIA_MODEL", "minimaxai/minimax-m3")
     NVIDIA_API_URL = os.environ.get("NVIDIA_API_URL", "https://integrate.api.nvidia.com/v1/chat/completions")
     

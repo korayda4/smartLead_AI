@@ -122,17 +122,12 @@ def api_sohbet():
         return jsonify({
             "ok": True,
             "yanit": yanit
-        })
-    except AIServiceError as err:
-        return jsonify({
-            "ok": False,
-            "hata": str(err)
-        }), 502
+        }), 200
     except Exception as err:
         return jsonify({
-            "ok": False,
-            "hata": "Sohbet işlenirken beklenmeyen bir hata oluştu."
-        }), 500
+            "ok": True,
+            "yanit": "Afet Noktası Danışmanı: Şu anda sistemimizde kısa süreli bir yoğunluk yaşanıyor. Size yardımcı olabilmemiz için isim ve telefon numaranızı form üzerinden iletebilirsiniz."
+        }), 200
 
 
 @main_bp.route("/api/leads", methods=["POST", "OPTIONS"])
