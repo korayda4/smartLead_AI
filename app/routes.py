@@ -98,12 +98,15 @@ def dashboard():
     return render_template("dashboard.html")
 
 
-@main_bp.route("/api/sohbet", methods=["POST"])
+@main_bp.route("/api/sohbet", methods=["POST", "OPTIONS"])
 def api_sohbet():
     """
     API Endpoint for processing visitor chat messages via AI Service.
     Expects JSON: { "mesaj": string, "gecmis": list }
     """
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True}), 200
+
     data = request.get_json(silent=True) or {}
     mesaj = data.get("mesaj", "").strip()
     gecmis = data.get("gecmis", [])
@@ -132,12 +135,15 @@ def api_sohbet():
         }), 500
 
 
-@main_bp.route("/api/leads", methods=["POST"])
+@main_bp.route("/api/leads", methods=["POST", "OPTIONS"])
 def api_lead_olustur():
     """
     API Endpoint for saving visitor contact details (name, phone, message).
     Expects JSON: { "isim": string, "telefon": string, "mesaj": string }
     """
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True}), 200
+
     data = request.get_json(silent=True) or {}
     isim = data.get("isim", "").strip()
     telefon = data.get("telefon", "").strip()
@@ -163,11 +169,13 @@ def api_lead_olustur():
         }), 500
 
 
-@main_bp.route("/api/leads", methods=["GET"])
+@main_bp.route("/api/leads", methods=["GET", "OPTIONS"])
 def api_lead_listele():
     """
     API Endpoint returning all saved leads for the dashboard.
     """
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True}), 200
     try:
         leadler = tum_leadler()
         return jsonify({
