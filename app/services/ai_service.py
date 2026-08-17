@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class AIServiceError(Exception):
-    """Custom exception raised when Groq AI API service fails."""
+    """Custom exception raised when NVIDIA NIM AI API service fails."""
     def __init__(self, message: str, original_exception: Exception | None = None):
         super().__init__(message)
         self.original_exception = original_exception
@@ -14,18 +14,18 @@ class AIServiceError(Exception):
 
 class AIService:
     """
-    Groq AI Service wrapper handling LLM communication for Afet Noktası sales assistant.
+    NVIDIA NIM AI Service wrapper handling LLM communication for Afet Noktası sales assistant.
     """
 
     def __init__(self, api_key: str | None = None, model: str | None = None, api_url: str | None = None):
-        self.api_key = api_key if api_key is not None else Config.GROQ_API_KEY
-        self.model = model or Config.GROQ_MODEL
-        self.api_url = api_url or Config.GROQ_API_URL
+        self.api_key = api_key if api_key is not None else Config.NVIDIA_API_KEY
+        self.model = model or Config.NVIDIA_MODEL
+        self.api_url = api_url or Config.NVIDIA_API_URL
         self.system_prompt = Config.BUSINESS_CONTEXT
 
     def sohbet_yaniti_al(self, kullanici_mesaji: str, gecmis: list[dict] | None = None) -> str:
         """
-        Sends user message and conversation history to Groq API and returns response text.
+        Sends user message and conversation history to NVIDIA NIM API and returns response text.
         
         :param kullanici_mesaji: New input message from visitor.
         :param gecmis: List of past message dicts [{'role': 'user'|'assistant', 'content': '...'}]
@@ -49,19 +49,22 @@ class AIService:
 
         # Fallback mode if API key is not configured
         if not self.api_key or self.api_key.strip() == "":
-            logger.warning("GROQ_API_KEY bulunamadı. Mock yanıt modunda çalışılıyor.")
+            logger.warning("NVIDIA_API_KEY bulunamadı. Mock yanıt modunda çalışılıyor.")
             return self._mock_yanit_uret(kullanici_mesaji)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         }
 
         payload = {
             "model": self.model,
             "messages": messages,
-            "temperature": 0.7,
-            "max_tokens": 1800
+            "temperature": 0.55,
+            "top_p": 0.95,
+            "max_tokens": 4096,
+            "stream": False
         }
 
         try:
@@ -69,23 +72,23 @@ class AIService:
                 self.api_url,
                 headers=headers,
                 json=payload,
-                timeout=12
+                timeout=30
             )
             
             if response.status_code != 200:
                 error_detail = response.text
-                logger.error(f"Groq API Hatası [{response.status_code}]: {error_detail}")
-                raise AIServiceError(f"Groq API isteği başarısız oldu (Status {response.status_code}): {error_detail}")
+                logger.error(f"NVIDIA API Hatası [{response.status_code}]: {error_detail}")
+                raise AIServiceError(f"NVIDIA API isteği başarısız oldu (Status {response.status_code}): {error_detail}")
 
             data = response.json()
             ai_message = data["choices"][0]["message"]["content"]
             return ai_message.strip()
 
         except requests.RequestException as exc:
-            logger.error(f"Groq API Bağlantı Hatası: {exc}")
-            raise AIServiceError("Groq servisine bağlanırken ağ hatası oluştu.", original_exception=exc)
+            logger.error(f"NVIDIA API Bağlantı Hatası: {exc}")
+            raise AIServiceError("NVIDIA AI servisine bağlanırken ağ hatası oluştu.", original_exception=exc)
         except (KeyError, IndexError, ValueError) as exc:
-            logger.error(f"Groq API Yanıt Parse Hatası: {exc}")
+            logger.error(f"NVIDIA API Yanıt Parse Hatası: {exc}")
             raise AIServiceError("Yapay zeka yanıtı işlenirken bir biçim hatası oluştu.", original_exception=exc)
 
     def _mock_yanit_uret(self, kullanici_mesaji: str) -> str:

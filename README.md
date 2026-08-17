@@ -1,6 +1,6 @@
 # 🛡️ Afet Noktası - Akıllı Afet Hazırlık & Satış Asistanı Platformu
 
-**Afet Noktası**, doğal afetler öncesinde ve anında hayati öneme sahip sismik risk verileri sunan, **Offline Mesh** (internetsiz haberleşme) altyapısını destekleyen ve bünyesindeki **Groq AI (Llama-3.1)** destekli Akıllı Asistan ile kullanıcılara kişiselleştirilmiş 72 saatlik deprem çantası çözümleri sunan mobil dijital platform web MVP projesidir.
+**Afet Noktası**, doğal afetler öncesinde ve anında hayati öneme sahip sismik risk verileri sunan, **Offline Mesh** (internetsiz haberleşme) altyapısını destekleyen ve bünyesindeki **NVIDIA NIM AI (MiniMax-M3)** destekli Akıllı Asistan ile kullanıcılara kişiselleştirilmiş 72 saatlik deprem çantası çözümleri sunan mobil dijital platform web MVP projesidir.
 
 ---
 
@@ -13,6 +13,7 @@ smartlead_ai/
 ├── run.py                 # Sunucuyu başlatan ana giriş noktası
 ├── config.py              # Uygulama ayarları, .env okuyucu ve marka prompt yönetimi
 ├── requirements.txt       # Bağımlılıklar (Flask, requests, python-dotenv)
+├── .env                   # Çevre değişkenleri ve NVIDIA API anahtarı (Gizli)
 ├── .env.example           # Örnek çevre değişkenleri şablonu
 ├── .gitignore             # Güvenlik ve venv yok sayma kuralları
 └── app/
@@ -25,7 +26,7 @@ smartlead_ai/
     │   └── dashboard.html # F-Pattern UX Bağımsız Yönetim Paneli
     └── services/
         ├── __init__.py
-        └── ai_service.py  # Groq API entegrasyonu (AIService & AIServiceError)
+        └── ai_service.py  # NVIDIA NIM AI entegrasyonu (AIService & AIServiceError)
 ```
 
 ---
@@ -38,7 +39,7 @@ smartlead_ai/
 - **Ziyaretçi İzolasyonu:** Ziyaretçi arayüzünde yönetim paneline dair hiçbir buton veya yönlendirme izi yer almaz.
 
 ### 2. Yüzen Yapay Zeka Asistanı Modalı (Floating AI Modal)
-- **Groq Llama-3.1 Entegrasyonu:** Hızlı ve doğal Türkçe yanıt üretimi.
+- **NVIDIA NIM (MiniMax-M3) Entegrasyonu:** Yüksek hızlı, akıllı ve doğal Türkçe afet danışmanlığı yanıt üretimi.
 - **Çoklu Tur Sohbet Hafızası (Multi-Turn Chat Memory):** Yapay zeka kullanıcının önceki mesajlarını ve bölgesel bilgilerini unutmaz.
 - **Zengin Metin Ayrıştırma (`marked.js`):** Liste maddeleri, kalın yazılar ve başlıklar düzenli HTML formatında sunulur.
 - **Entegre İletişim Formu:** Ziyaretçilerin doğrudan sohbet modülü üzerinden ücretsiz risk ve kit teklifi bırakabilmesi.
@@ -53,7 +54,7 @@ smartlead_ai/
 ## 🔒 Güvenlik Prensipleri
 
 1. **SQL Injection Koruması:** `app/database.py` içerisindeki tüm sorgularda strictly `?` parametre yer tutucuları kullanılmıştır.
-2. **Hassas Veri Koruması:** API anahtarları ve gizli veriler `.env` dosyasında tutulur ve versiyon kontrolüne (git) dahil edilmez.
+2. **Hassas Veri Koruması:** API anahtarları ve gizli veriler `.env` dosyasında tutulur ve versiyon kontrolüne (`.gitignore`) dahil edilmez.
 3. **Yönlendirme Koruması:** Yönetim paneli rotaları (`/dashboard`) oturum doğrulamasız erişime kapalıdır.
 
 ---
@@ -74,11 +75,12 @@ pip install -r requirements.txt
 ```
 
 ### 3. `.env` Dosyasını Yapılandırın
-`.env.example` dosyasını kopyalayarak `.env` oluşturun ve Groq API anahtarınızı tanımlayın:
+`.env.example` dosyasını kopyalayarak `.env` oluşturun ve NVIDIA NIM API bilgilerinizi tanımlayın:
 ```env
 SECRET_KEY=afet-noktasi-secret-key-2026
-GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.1-8b-instant
+NVIDIA_API_KEY=your_nvidia_api_key_here
+NVIDIA_MODEL=minimaxai/minimax-m3
+NVIDIA_API_URL=https://integrate.api.nvidia.com/v1/chat/completions
 DATABASE_PATH=afet_noktasi.db
 ```
 
