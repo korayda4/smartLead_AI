@@ -1,98 +1,75 @@
+import re
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session
-from app.database import lead_ekle, tum_leadler
-from app.services.ai_service import AIService, AIServiceError
+from app.repositories.lead_repository import LeadRepository
+from app.models.lead import Lead
+from app.services.ai_service import AIService
 
 main_bp = Blueprint("main", __name__)
-ai_service = AIService()
+_ai = AIService()
+_leads = LeadRepository()
 
-# Hardcoded MVP Administrator Credentials
-ADMIN_EMAIL = "koray@afetnoktasi.com"
-ADMIN_PASSWORD = "123"
+_ADMIN_EMAIL = "koray@afetnoktasi.com"
+_ADMIN_PASSWORD = "123"
+_WIX_URL = "https://koraydemirmc.wixsite.com/afet-noktas/"
+_PHONE_RE = re.compile(r"(?:0\s*5\d{2}|5\d{2})[\s\-\.]?\d{3}[\s\-\.]?\d{2}[\s\-\.]?\d{2}|\b\d{10,11}\b")
+_NAME_RE = re.compile(r"(?:adım|adim|ismim)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ]+)", re.IGNORECASE)
 
 
-@main_bp.route("/", methods=["GET"])
+@main_bp.route("/")
 def index():
-    """
-    Renders the public Afet Noktası Landing Page & AI Assistant Modal.
-    """
     return render_template("index.html")
 
 
-@main_bp.route("/hakkimizda", methods=["GET"])
+@main_bp.route("/hakkimizda")
 def hakkimizda():
-    """
-    Renders the official Hakkımızda & Marka Hikayesi page.
-    """
     return render_template("hakkimizda.html")
 
 
-@main_bp.route("/kvkk", methods=["GET"])
+@main_bp.route("/kvkk")
 def kvkk():
-    """
-    Renders the official KVKK Aydınlatma Metni page.
-    """
     return render_template("kvkk.html")
 
 
-@main_bp.route("/gizlilik", methods=["GET"])
+@main_bp.route("/gizlilik")
 def gizlilik():
-    """
-    Renders the official Gizlilik Politikası page.
-    """
     return render_template("gizlilik.html")
 
 
-@main_bp.route("/cerez-politikasi", methods=["GET"])
+@main_bp.route("/cerez-politikasi")
 def cerez():
-    """
-    Renders the official Çerez Politikası page.
-    """
     return render_template("cerez.html")
 
 
-@main_bp.route("/kullanim-kosullari", methods=["GET"])
+@main_bp.route("/kullanim-kosullari")
 def kullanim_kosullari():
-    """
-    Renders the official Kullanım Koşulları page.
-    """
     return render_template("kullanim_kosullari.html")
+
+
+@main_bp.route("/anasayfa")
+def anasayfa_redirect():
+    return redirect(_WIX_URL, 302)
 
 
 @main_bp.route("/login", methods=["GET", "POST"])
 def login():
-    """
-    Renders login template or processes administrator login credentials.
-    """
     if request.method == "GET":
-        if session.get("user"):
-            return redirect(url_for("main.dashboard"))
-        return render_template("login.html")
-
+        return redirect(url_for("main.dashboard")) if session.get("user") else render_template("login.html")
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "").strip()
-
-    if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
+    if email == _ADMIN_EMAIL and password == _ADMIN_PASSWORD:
         session["user"] = email
         return redirect(url_for("main.dashboard"))
-
     return render_template("login.html", hata="Hatalı e-posta veya şifre."), 401
 
 
-@main_bp.route("/logout", methods=["GET"])
+@main_bp.route("/logout")
 def logout():
-    """
-    Logs out the current administrator session.
-    """
     session.pop("user", None)
     return redirect(url_for("main.login"))
 
 
-@main_bp.route("/dashboard", methods=["GET"])
+@main_bp.route("/dashboard")
 def dashboard():
-    """
-    Renders the Lead Management Dashboard for authenticated administrators.
-    Redirects to /login if user is not authenticated in session.
-    """
     if not session.get("user"):
         return redirect(url_for("main.login"))
     return render_template("dashboard.html")
@@ -100,10 +77,6 @@ def dashboard():
 
 @main_bp.route("/api/sohbet", methods=["POST", "OPTIONS"])
 def api_sohbet():
-    """
-    API Endpoint for processing visitor chat messages via AI Service.
-    Expects JSON: { "mesaj": string, "gecmis": list }
-    """
     if request.method == "OPTIONS":
         return jsonify({"ok": True}), 200
 
@@ -112,42 +85,27 @@ def api_sohbet():
     gecmis = data.get("gecmis") or data.get("history") or data.get("messages") or []
 
     if not mesaj:
-        return jsonify({
-            "ok": False,
-            "hata": "Lütfen geçerli bir mesaj yazın."
-        }), 400
+        return jsonify({"ok": False, "hata": "Lütfen geçerli bir mesaj yazın."}), 400
 
-    # Auto-save lead if user shares phone number directly in chat
     try:
-        import re
-        phone_match = re.search(r"(?:0\s*5\d{2}|5\d{2})[\s\-\.]?\d{3}[\s\-\.]?\d{2}[\s\-\.]?\d{2}|\b\d{10,11}\b", mesaj)
+        phone_match = _PHONE_RE.search(mesaj)
         if phone_match:
-            name_match = re.search(r"(?:adım|adim|ismim)\s+([a-zA-ZçğıöşüÇĞİÖŞÜ]+)", mesaj, re.IGNORECASE)
-            lead_name = name_match.group(1).title() if name_match else "Sohbet Ziyaretçisi"
-            lead_phone = phone_match.group(0).replace(" ", "").replace("-", "").replace(".", "")
-            lead_ekle(isim=lead_name, telefon=lead_phone, mesaj=f"Canlı Sohbet İçi: {mesaj}")
+            name_match = _NAME_RE.search(mesaj)
+            name = name_match.group(1).title() if name_match else "Sohbet Ziyaretçisi"
+            phone = phone_match.group(0).replace(" ", "").replace("-", "").replace(".", "")
+            _leads.ekle(Lead(isim=name, telefon=phone, mesaj=f"Sohbet: {mesaj}"))
     except Exception:
         pass
 
     try:
-        yanit = ai_service.sohbet_yaniti_al(kullanici_mesaji=mesaj, gecmis=gecmis)
-        return jsonify({
-            "ok": True,
-            "yanit": yanit
-        }), 200
-    except Exception as err:
-        return jsonify({
-            "ok": True,
-            "yanit": "Şu anda sistemimizde kısa süreli bir yoğunluk yaşanıyor. Size yardımcı olabilmemiz ve bölgenize özel risk raporunu iletebilmemiz için isim ve telefon numaranızı ekrandaki form üzerinden iletebilirsiniz."
-        }), 200
+        yanit = _ai.sohbet_yaniti_al(kullanici_mesaji=mesaj, gecmis=gecmis)
+        return jsonify({"ok": True, "yanit": yanit}), 200
+    except Exception:
+        return jsonify({"ok": True, "yanit": "Şu anda kısa süreli bir yoğunluk var, lütfen tekrar deneyin."}), 200
 
 
 @main_bp.route("/api/leads", methods=["POST", "OPTIONS"])
 def api_lead_olustur():
-    """
-    API Endpoint for saving visitor contact details (name, phone, message).
-    Expects JSON: { "isim": string, "telefon": string, "mesaj": string }
-    """
     if request.method == "OPTIONS":
         return jsonify({"ok": True}), 200
 
@@ -157,41 +115,19 @@ def api_lead_olustur():
     mesaj = data.get("mesaj", "").strip()
 
     if not isim or not telefon:
-        return jsonify({
-            "ok": False,
-            "hata": "İsim ve Telefon alanları zorunludur."
-        }), 400
+        return jsonify({"ok": False, "hata": "İsim ve Telefon alanları zorunludur."}), 400
 
     try:
-        lead_id = lead_ekle(isim=isim, telefon=telefon, mesaj=mesaj)
-        return jsonify({
-            "ok": True,
-            "mesaj": "İletişim bilgileriniz başarıyla alındı. Uzmanlarımız sizinle iletişime geçecektir.",
-            "lead_id": lead_id
-        }), 201
+        lead_id = _leads.ekle(Lead(isim=isim, telefon=telefon, mesaj=mesaj))
+        return jsonify({"ok": True, "mesaj": "Bilgileriniz alındı.", "lead_id": lead_id}), 201
     except Exception as err:
-        return jsonify({
-            "ok": False,
-            "hata": f"Lead kaydedilirken veritabanı hatası oluştu: {str(err)}"
-        }), 500
+        return jsonify({"ok": False, "hata": str(err)}), 500
 
 
-@main_bp.route("/api/leads", methods=["GET", "OPTIONS"])
+@main_bp.route("/api/leads", methods=["GET"])
 def api_lead_listele():
-    """
-    API Endpoint returning all saved leads for the dashboard.
-    """
-    if request.method == "OPTIONS":
-        return jsonify({"ok": True}), 200
     try:
-        leadler = tum_leadler()
-        return jsonify({
-            "ok": True,
-            "toplam": len(leadler),
-            "data": leadler
-        })
+        leadler = _leads.hepsini_getir()
+        return jsonify({"ok": True, "toplam": len(leadler), "data": leadler})
     except Exception as err:
-        return jsonify({
-            "ok": False,
-            "hata": f"Kayıtlar çekilirken bir hata oluştu: {str(err)}"
-        }), 500
+        return jsonify({"ok": False, "hata": str(err)}), 500
